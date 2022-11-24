@@ -1,6 +1,9 @@
 
 library(tidyverse)
 library(dplyr)
+library(tictoc)
+
+tic() 
 
 Data <- readRDS("C:/Users/LoVa3397/Downloads/test_df (3).Rdata")
  
@@ -24,11 +27,20 @@ Data_long_select_long <- gather(Data_long_select, status, day2,date.30:date.90, 
 
 Data_long_select_long$status2 <- paste0(Data_long_select_long$vaccin,substr(Data_long_select_long$status,5,7))
 
-Data_part1 <- Data_long_select_long[,c(1,2,3)]
+Data_part1 <- Data_long_select[,c(1,2,3)]
 Data_part2 <- Data_long_select_long[,c(1,5,6)] 
 colnames(Data_part2) <- c("id","day","vaccin")
 
 Data_complete <- bind_rows(Data_part1,Data_part2)
 
 Data_complete_select <- Data_complete[Data_complete$day >= Startperiod2 & Data_complete$day <= Endperiod, ]
-Data_complete_select <- Data_complete_select[complete.cases(Data_complete_select),]
+
+Longterm <- Data[,c(1)]
+Longterm$Startperiod <- Startperiod2
+Longterm$Endperiod <- Endperiod
+
+Final <- merge(Longterm, Data_complete_select, by ="id", all.x=TRUE)
+Final$status <- ifelse(is.na(Final$vaccin), "longer",Final$vaccin)
+Final <- Final[,c(1,2,3,6,5)]
+
+toc()
