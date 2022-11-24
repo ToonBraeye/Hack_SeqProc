@@ -1,7 +1,7 @@
 library(data.table)
 
 ## VEBIS - simulated data
-
+set.seed(123)
 test.df <- data.table(id=c(1:1000), date.vacc1=as.Date('2020-01-01')+sample(c(1:(2*365)), 1000, replace=T))
 
 #Add an additional vaccination
